@@ -185,13 +185,13 @@ extension XHTTPConnection {
     /// Builds the QPACK header block for the download GET or the stream-one POST.
     func h3RequestHeaderBlock(method: String, includeMeta: Bool) -> Data {
         var path = configuration.normalizedPath
-        if includeMeta, !sessionId.isEmpty, configuration.sessionPlacement == .path {
+        if includeMeta, !sessionId.isEmpty, configuration.sessionIDPlacement == .path {
             path = appendToPath(path, sessionId)
         }
         var queryParts: [String] = []
         let configQuery = configuration.normalizedQuery
         if !configQuery.isEmpty { queryParts.append(configQuery) }
-        if includeMeta, !sessionId.isEmpty, configuration.sessionPlacement == .query {
+        if includeMeta, !sessionId.isEmpty, configuration.sessionIDPlacement == .query {
             queryParts.append("\(configuration.normalizedSessionKey)=\(sessionId)")
         }
         if configuration.xPaddingObfsMode, configuration.xPaddingPlacement == .query {
@@ -214,7 +214,7 @@ extension XHTTPConnection {
     /// `uplinkData` carries a packet-up payload in headers/cookies under non-body placement.
     func h3UploadHeaderBlock(seq: Int64?, contentLength: Int?, uplinkData: [UplinkDataField] = []) -> Data {
         var path = configuration.normalizedPath
-        if !sessionId.isEmpty, configuration.sessionPlacement == .path {
+        if !sessionId.isEmpty, configuration.sessionIDPlacement == .path {
             path = appendToPath(path, sessionId)
         }
         if let seq, configuration.seqPlacement == .path {
@@ -223,7 +223,7 @@ extension XHTTPConnection {
         var queryParts: [String] = []
         let configQuery = configuration.normalizedQuery
         if !configQuery.isEmpty { queryParts.append(configQuery) }
-        if !sessionId.isEmpty, configuration.sessionPlacement == .query {
+        if !sessionId.isEmpty, configuration.sessionIDPlacement == .query {
             queryParts.append("\(configuration.normalizedSessionKey)=\(sessionId)")
         }
         if let seq, configuration.seqPlacement == .query {
@@ -299,7 +299,7 @@ extension XHTTPConnection {
 
     private func h3AppendSessionMeta(to headers: inout [(name: String, value: String)]) {
         guard !sessionId.isEmpty else { return }
-        switch configuration.sessionPlacement {
+        switch configuration.sessionIDPlacement {
         case .header:
             headers.append((name: configuration.normalizedSessionKey.lowercased(), value: sessionId))
         case .cookie:

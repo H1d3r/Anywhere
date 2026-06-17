@@ -169,7 +169,7 @@ nonisolated class XHTTPConnection {
     func applySessionId(to request: inout String, path: inout String) {
         guard !sessionId.isEmpty else { return }
         let key = configuration.normalizedSessionKey
-        switch configuration.sessionPlacement {
+        switch configuration.sessionIDPlacement {
         case .path:
             path = appendToPath(path, sessionId)
         case .query:
@@ -187,7 +187,7 @@ nonisolated class XHTTPConnection {
     /// Returns query string components for session/seq placed in query params.
     func queryParamsForMeta(seq: Int64? = nil) -> String {
         var parts: [String] = []
-        if !sessionId.isEmpty && configuration.sessionPlacement == .query {
+        if !sessionId.isEmpty && configuration.sessionIDPlacement == .query {
             let key = configuration.normalizedSessionKey
             parts.append("\(key)=\(sessionId)")
         }

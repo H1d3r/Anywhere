@@ -166,9 +166,9 @@ struct XHTTPConfiguration: Codable, Equatable, Hashable {
     let uplinkHTTPMethod: String
 
     // Session/seq placement (from extra)
-    let sessionPlacement: XHTTPPlacement
+    let sessionIDPlacement: XHTTPPlacement
     /// Auto-determined by placement if empty.
-    let sessionKey: String
+    let sessionIDKey: String
     let seqPlacement: XHTTPPlacement
     /// Auto-determined by placement if empty.
     let seqKey: String
@@ -210,8 +210,8 @@ struct XHTTPConfiguration: Codable, Equatable, Hashable {
         xPaddingPlacement: XHTTPPlacement = .queryInHeader,
         xPaddingMethod: XHTTPPaddingMethod = .repeatX,
         uplinkHTTPMethod: String = "POST",
-        sessionPlacement: XHTTPPlacement = .path,
-        sessionKey: String = "",
+        sessionIDPlacement: XHTTPPlacement = .path,
+        sessionIDKey: String = "",
         seqPlacement: XHTTPPlacement = .path,
         seqKey: String = "",
         sessionIDTable: String = "",
@@ -238,8 +238,8 @@ struct XHTTPConfiguration: Codable, Equatable, Hashable {
         self.xPaddingPlacement = xPaddingPlacement
         self.xPaddingMethod = xPaddingMethod
         self.uplinkHTTPMethod = uplinkHTTPMethod
-        self.sessionPlacement = sessionPlacement
-        self.sessionKey = sessionKey
+        self.sessionIDPlacement = sessionIDPlacement
+        self.sessionIDKey = sessionIDKey
         self.seqPlacement = seqPlacement
         self.seqKey = seqKey
         self.sessionIDTable = sessionIDTable
@@ -269,8 +269,8 @@ struct XHTTPConfiguration: Codable, Equatable, Hashable {
         xPaddingPlacement = try c.decodeIfPresent(XHTTPPlacement.self, forKey: .xPaddingPlacement) ?? .queryInHeader
         xPaddingMethod = try c.decodeIfPresent(XHTTPPaddingMethod.self, forKey: .xPaddingMethod) ?? .repeatX
         uplinkHTTPMethod = try c.decodeIfPresent(String.self, forKey: .uplinkHTTPMethod) ?? "POST"
-        sessionPlacement = try c.decodeIfPresent(XHTTPPlacement.self, forKey: .sessionPlacement) ?? .path
-        sessionKey = try c.decodeIfPresent(String.self, forKey: .sessionKey) ?? ""
+        sessionIDPlacement = try c.decodeIfPresent(XHTTPPlacement.self, forKey: .sessionIDPlacement) ?? .path
+        sessionIDKey = try c.decodeIfPresent(String.self, forKey: .sessionIDKey) ?? ""
         seqPlacement = try c.decodeIfPresent(XHTTPPlacement.self, forKey: .seqPlacement) ?? .path
         seqKey = try c.decodeIfPresent(String.self, forKey: .seqKey) ?? ""
         sessionIDTable = try c.decodeIfPresent(String.self, forKey: .sessionIDTable) ?? ""
@@ -315,8 +315,8 @@ struct XHTTPConfiguration: Codable, Equatable, Hashable {
 
     /// Auto-determined by placement when unset.
     var normalizedSessionKey: String {
-        if !sessionKey.isEmpty { return sessionKey }
-        switch sessionPlacement {
+        if !sessionIDKey.isEmpty { return sessionIDKey }
+        switch sessionIDPlacement {
         case .header: return "X-Session"
         case .cookie, .query: return "x_session"
         default: return ""
@@ -533,8 +533,8 @@ struct XHTTPConfiguration: Codable, Equatable, Hashable {
 
         let uplinkHTTPMethod = extra["uplinkHTTPMethod"] as? String ?? "POST"
 
-        let sessionPlacement = XHTTPPlacement(rawValue: extra["sessionPlacement"] as? String ?? "path") ?? .path
-        let sessionKey = extra["sessionKey"] as? String ?? ""
+        let sessionIDPlacement = XHTTPPlacement(rawValue: extra["sessionIDPlacement"] as? String ?? "path") ?? .path
+        let sessionIDKey = extra["sessionIDKey"] as? String ?? ""
         let seqPlacement = XHTTPPlacement(rawValue: extra["seqPlacement"] as? String ?? "path") ?? .path
         let seqKey = extra["seqKey"] as? String ?? ""
 
@@ -586,8 +586,8 @@ struct XHTTPConfiguration: Codable, Equatable, Hashable {
             xPaddingPlacement: xPaddingPlacement,
             xPaddingMethod: xPaddingMethod,
             uplinkHTTPMethod: uplinkHTTPMethod,
-            sessionPlacement: sessionPlacement,
-            sessionKey: sessionKey,
+            sessionIDPlacement: sessionIDPlacement,
+            sessionIDKey: sessionIDKey,
             seqPlacement: seqPlacement,
             seqKey: seqKey,
             sessionIDTable: sessionIDTable,
@@ -624,8 +624,8 @@ extension XHTTPConfiguration {
         if xPaddingPlacement != .queryInHeader { dict["xPaddingPlacement"] = xPaddingPlacement.rawValue }
         if xPaddingMethod != .repeatX { dict["xPaddingMethod"] = xPaddingMethod.rawValue }
         if uplinkHTTPMethod != "POST" { dict["uplinkHTTPMethod"] = uplinkHTTPMethod }
-        if sessionPlacement != .path { dict["sessionPlacement"] = sessionPlacement.rawValue }
-        if !sessionKey.isEmpty { dict["sessionKey"] = sessionKey }
+        if sessionIDPlacement != .path { dict["sessionIDPlacement"] = sessionIDPlacement.rawValue }
+        if !sessionIDKey.isEmpty { dict["sessionIDKey"] = sessionIDKey }
         if seqPlacement != .path { dict["seqPlacement"] = seqPlacement.rawValue }
         if !seqKey.isEmpty { dict["seqKey"] = seqKey }
         if uplinkDataPlacement != .body { dict["uplinkDataPlacement"] = uplinkDataPlacement.rawValue }

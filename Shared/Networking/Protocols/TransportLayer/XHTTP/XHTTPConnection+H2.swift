@@ -92,7 +92,7 @@ extension XHTTPConnection {
 
         // :path — matches Go http2.Transport req.URL.RequestURI() (path + query)
         var path = configuration.normalizedPath
-        if includeMeta && !sessionId.isEmpty && configuration.sessionPlacement == .path {
+        if includeMeta && !sessionId.isEmpty && configuration.sessionIDPlacement == .path {
             path = appendToPath(path, sessionId)
         }
         var queryParts: [String] = []
@@ -101,7 +101,7 @@ extension XHTTPConnection {
             queryParts.append(configQuery)
         }
         if includeMeta {
-            if !sessionId.isEmpty && configuration.sessionPlacement == .query {
+            if !sessionId.isEmpty && configuration.sessionIDPlacement == .query {
                 queryParts.append("\(configuration.normalizedSessionKey)=\(sessionId)")
             }
         }
@@ -132,7 +132,7 @@ extension XHTTPConnection {
 
         // Session metadata — non-path placements
         if includeMeta && !sessionId.isEmpty {
-            switch configuration.sessionPlacement {
+            switch configuration.sessionIDPlacement {
             case .header:
                 block.append(0x40)
                 block.append(contentsOf: Self.hpackEncodeString(configuration.normalizedSessionKey.lowercased()))
@@ -181,7 +181,7 @@ extension XHTTPConnection {
 
         // :path
         var path = configuration.normalizedPath
-        if !sessionId.isEmpty && configuration.sessionPlacement == .path {
+        if !sessionId.isEmpty && configuration.sessionIDPlacement == .path {
             path = appendToPath(path, sessionId)
         }
         if let seq, configuration.seqPlacement == .path {
@@ -192,7 +192,7 @@ extension XHTTPConnection {
         if !configQuery.isEmpty {
             queryParts.append(configQuery)
         }
-        if !sessionId.isEmpty && configuration.sessionPlacement == .query {
+        if !sessionId.isEmpty && configuration.sessionIDPlacement == .query {
             queryParts.append("\(configuration.normalizedSessionKey)=\(sessionId)")
         }
         if let seq, configuration.seqPlacement == .query {
@@ -227,7 +227,7 @@ extension XHTTPConnection {
 
         // Session metadata — non-path placements
         if !sessionId.isEmpty {
-            switch configuration.sessionPlacement {
+            switch configuration.sessionIDPlacement {
             case .header:
                 block.append(0x40)
                 block.append(contentsOf: Self.hpackEncodeString(configuration.normalizedSessionKey.lowercased()))
